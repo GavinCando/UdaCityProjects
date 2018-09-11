@@ -1,5 +1,6 @@
 
 import random
+import math
 
 class Robot(object):
 
@@ -46,9 +47,8 @@ class Robot(object):
             self.epsilon = 0.0
         else:
             # TODO 2. Update parameters when learning
-            self.epsilon = self.epsilon / (self.t + 1)
-            self.t += 0.01
-
+            self.epsilon = math.cos(self.epsilon)
+            
         return self.epsilon
 
     def sense_state(self):
@@ -68,9 +68,7 @@ class Robot(object):
         # Qtable[state] ={'u':xx, 'd':xx, ...}
         # If Qtable[state] already exits, then do
         # not change it.
-
-        if self.Qtable.has_key(state) == False:
-            self.Qtable[state] = {action: 0.0 for action in self.valid_actions}
+        self.Qtable[state] = {action: 0.0 for action in self.valid_actions}
     
     def choose_action(self):
         """
@@ -81,9 +79,9 @@ class Robot(object):
             # TODO 5. Return whether do random choice
             # hint: generate a random number, and compare
             # it with epsilon
-            randomNumber = random.random()
-            return True if randomNumber > self.epsilon else False
-
+            rt = random.random() < self.epsilon
+            return rt
+      
         if self.learning:
             if is_random_exploration():
                 # TODO 6. Return random choose aciton
@@ -132,7 +130,7 @@ class Robot(object):
         
         self.create_Qtable_line(next_state) # create q table line for next state
         #print "Next State Qtable, ", self.Qtable[next_state]
-
+        
         if self.learning and not self.testing:
             self.update_Qtable(reward, action, next_state) # update q table
             self.update_parameter() # update parameters
