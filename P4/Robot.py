@@ -21,6 +21,8 @@ class Robot(object):
 
         self.Qtable = {}
         self.reset()
+        
+        self.e = []
 
     def reset(self):
         """
@@ -47,8 +49,15 @@ class Robot(object):
             self.epsilon = 0.0
         else:
             # TODO 2. Update parameters when learning
-            self.epsilon = math.cos(self.epsilon)
+            self.epsilon = self.epsilon0/(self.t/150 + 1)
+            self.t += 1
+
+#             self.t += 1
+#             a= math.pi / 2 / 3000
+#             self.epsilon = 0.5 * math.cos(a * self.t)
             
+        self.e.append(self.epsilon)
+        
         return self.epsilon
 
     def sense_state(self):
@@ -68,7 +77,8 @@ class Robot(object):
         # Qtable[state] ={'u':xx, 'd':xx, ...}
         # If Qtable[state] already exits, then do
         # not change it.
-        self.Qtable[state] = {action: 0.0 for action in self.valid_actions}
+        if (self.Qtable.has_key(state) == False):
+            self.Qtable[state] = {action: 0.0 for action in self.valid_actions}
     
     def choose_action(self):
         """
@@ -136,3 +146,12 @@ class Robot(object):
             self.update_parameter() # update parameters
 
         return action, reward
+    
+    
+    def showEpsilonLine(self):
+        import matplotlib.pyplot as plt
+        x = [t for t in range(len(self.e))]
+        y = self.e
+        
+        plt.plot(x, y)
+        plt.show()

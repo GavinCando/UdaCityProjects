@@ -177,13 +177,17 @@ class Runner(object):
 
         writer.release()
 
-    def plot_results(self):
+    def plot_results(self, title = None):
         plt.figure(figsize=(12,4))
+
+        if title != None: print title
+        
         plt.subplot(131)
         plt.title("Success Times")
         plt.plot(np.cumsum(self.train_robot_statics['success']))
         plt.subplot(132)
         plt.title("Accumulated Rewards")
+        print "Accumulated Rewards std ", np.array(self.train_robot_statics['reward']).std()
         plt.plot(np.array(self.train_robot_statics['reward']))
         plt.subplot(133)
         plt.title("Runing Times per Epoch")
